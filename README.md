@@ -6,4 +6,4 @@
 |章节|chapter|路径|
 |---|----|-----|
 |第一章 前言|1 Introduction||
-|第二章 线性代数|2 Linear Algebra|[doc](https://github.com/conglanjun/deeplearning/blob/main/第二章 线性代数.md)|
+|第二章 线性代数|2 Linear Algebra|[doc](https://github.com/conglanjun/deeplearning/blob/main/chapterTwo_linearAlgebra.md)|
