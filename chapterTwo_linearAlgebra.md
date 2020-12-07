@@ -207,11 +207,7 @@ $$
 \bullet f(x+y)\le f(x) + f(y)\\
 \bullet \forall \alpha∈ R, f(\alpha x)=\vert \alpha \vert f(x)
 $$
-当p=2，L<sup>2</sup>范数被称为`欧几里得范数`（Euclidean norm）。它表示从原点出发到向量x确定的点的欧几里得距离。L<sup>2</sup>范数经常简化表示为
-$$
-\Vert x \Vert
-$$
-略去了下标2。平方L<sup>2</sup>范数也经常用来衡量向量大小，可以简单地通过`点积`x<sup>T</sup>x计算。
+当p=2，L<sup>2</sup>范数被称为`欧几里得范数`（Euclidean norm）。它表示从原点出发到向量x确定的点的欧几里得距离。L<sup>2</sup>范数经常简化表示为$\Vert x \Vert$略去了下标2。平方L<sup>2</sup>范数也经常用来衡量向量大小，可以简单地通过`点积`x<sup>T</sup>x计算。
 
 平方L<sup>2</sup>范数计算比L<sup>2</sup>范数本身方便。例如，平方L<sup>2</sup>范数对x中每个元素的导数只取决于对应元素，而L<sup>2</sup>范数导数取决于整个向量。有时候平方L<sup>2</sup>范数也不太理想，因为在原点附近增长缓慢。有些机器学习应用中，区分零和非零是很重要的。我们转而去用在所有位置斜率相同的函数。同时保持简单的数学形式的函数：L<sup>1</sup>范数：
 $$
@@ -221,11 +217,7 @@ $$
 
 L<sup>1</sup>范数也用作L<sup>0</sup>范数作为表示非零元素个数的替代者。
 
-最大番薯（max norm）是
-$$
-L^\infty
-$$
-表示向量中最大量级的元素的绝对值。
+最大范数（max norm）是$L^\infty$。表示向量中最大量级的元素的绝对值。
 $$
 \Vert x \Vert _ \infty = \max_i \vert x_i \vert
 $$
@@ -235,9 +227,28 @@ $$
 $$
 两个向量的点积（dot product）可以用范数表示。
 $$
-x^T y = \Vert x\Vert_2 \Vert y \Vert _2 \cos \theta\\
-其中 \theta 是 x和y的夹角
+x^T y = \Vert x\Vert_2 \Vert y \Vert _2 \cos \theta
 $$
+其中 $\theta$ 是 x和y的夹角。
+
+```python
+# 范数
+a = np.array([1.0,3.0])
+print('向量2范数：', np.linalg.norm(a, ord=2))
+print('向量1范数：', np.linalg.norm(a, ord=1))
+print('向量无穷范数：', np.linalg.norm(a, ord=np.inf))
+
+向量2范数： 3.1622776601683795
+向量1范数： 4.0
+向量无穷范数： 3.0
+
+a = np.array([[1.0,3.0],[2.0,1.0]])
+print('矩阵F范数：', np.linalg.norm(a, ord='fro'))
+
+矩阵F范数： 3.872983346207417
+```
+
+
 
 ### 2.6 特殊的矩阵和向量
 
@@ -279,37 +290,57 @@ $$
 
 方阵A的特征向量（eigenvector）是非零向量v乘A相当于对v进行缩放。
 $$
-Av = \lambda v\\
-标量\lambda被称为这个特征向量对应的`特征值`（eigenvalue）。
+Av = \lambda v
 $$
-特征向量v和乘以一个标量s后的sv都是A的特征向量，并且v和sv有相同的特征值。因此只考虑单位特征向量。
+标量$\lambda$被称为这个特征向量对应的`特征值`（eigenvalue）。特征向量v和乘以一个标量s后的sv都是A的特征向量，并且v和sv有相同的特征值。因此只考虑单位特征向量。
+
+假设矩阵A有n个线性无关的特征向量$\left\{v^{(1)},...,v^{(n)}\right\}$，对应着特征值$\left\{\lambda_1,...,\lambda_n\right\}$，我们将特征向量拼接成一个矩阵V，每一列是一个特征向量：$\left\{v^{(1)},...,v^{(n)}\right\}$。同样，我们拼接特征值成一个向量$\lambda=[\lambda_1,...,\lambda_n]$，所以A的特征值分解（eigendecomposition）写成：
 $$
-假设矩阵A有n个线性无关的特征向量\left\{v^{(1)},...,v^{(n)}\right\}，对应着特征值\left\{\lambda_1,...,\lambda_n\right\}，我们将特征向量拼接成一个矩阵V，\\
-每一列是一个特征向量：\left\{v^{(1)},...,v^{(n)}\right\}。同样，我们拼接特征值成一个向量
-\lambda=[\lambda_1,...,\lambda_n]，所以A的特征值分解（eigendecomposition）写成：\\
 A=Vdiag(\lambda)V^{-1}
 $$
+
+```python
+A = np.array([[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0]])
+# 计算特征值
+print('特征值：', np.linalg.eigvals(A))
+# 计算特征值和特征向量
+eigvals, eigvectors = np.linalg.eig(A)
+print('特征值：', eigvals)
+print('特征向量：', eigvectors)
+
+特征值: [ 1.61168440e+01 -1.11684397e+00 -3.73313677e-16] 
+特征值: [ 1.61168440e+01 -1.11684397e+00 -3.73313677e-16] 
+特征向量: [[-0.23197069 -0.78583024 0.40824829]
+[-0.52532209 -0.08675134 -0.81649658] [-0.8186735 0.61232756 0.40824829]]
+```
+
+
+
 我们经常做矩阵分解成特征值和特征向量，这样可以帮助我们分析矩阵的特性。就像质因素分解帮组我们理解整数一样。
 
 不是每个矩阵都可以分解成特征值和特征向量。某些情况下，特征分解会涉及复数而非实数。具体来说，每个实对称矩阵（real symmetric）都可以分解成实特征向量和实特征值表达式：
 $$
 A=Q\Lambda Q^T 
 $$
-Q是A的特征向量组成的正交矩阵，
-$$
-\Lambda 是对角矩阵。特征值\Lambda_{i,i}与特征向量Q的第i列相关联。记作Q_{:,i}。\\
-因为Q是正交矩阵，我们可以认为A在v^{(i)}方向上伸缩\lambda_i倍。
-$$
-矩阵特征值分解很有用，如果任意一个特征值是0时，矩阵是奇异（singular）矩阵。实对称矩阵的特征值分解也用来优化二次方程
+Q是A的特征向量组成的正交矩阵，$\Lambda$ 是对角矩阵。特征值$\Lambda_{i,i}$与特征向量Q的第i列相关联。记作$Q_{:,i}$。因为Q是正交矩阵，我们可以认为A在$v^{(i)}$方向上伸缩$\lambda_i$倍。矩阵特征值分解很有用，如果任意一个特征值是0时，矩阵是奇异（singular）矩阵。实对称矩阵的特征值分解也用来优化二次方程
 $$
 f(x)=x^TAx,限制\Vert x \Vert _2 = 1
 $$
 当x等于A的某个特征向量时，f将返回对应的特征值。在限制条件下，函数f的最大值是最大特征值，最小值是最小特征值。
 
-所有特征值都是正数的矩阵称为`正定`（positive definite），所有特征值都是非负的矩阵成为`半正定`（positive semidefinite）。
-$$
-半正定受关注是因为\forall x,x^TAx \ge 0。此外，正定矩阵还保证x^TAx=0 \Rightarrow x = 0。
-$$
+所有特征值都是正数的矩阵称为`正定`（positive definite），所有特征值都是非负的矩阵成为`半正定`（positive semidefinite）。半正定受关注是因为$\forall x,x^TAx \ge 0$。此外，正定矩阵还保证$x^TAx=0 \Rightarrow x = 0$。
 
 ### 2.8 奇异值分解
+
+除了将矩阵分解成特征值（eigenvalues）和特征向量（eigenvectors）。`奇异值分解`（singular value decomposition SVD）提供了另一种分解矩阵为`奇异值`（singular value）和`奇异向量`（singular vector）的方法。通过奇异值分解我们会得到和特征分解相同类型的信息。然而奇异值分解更广泛，每个实数矩阵都有奇异值分解，但不一定有特征值分解。非方阵没有特征值分解，就必须用奇异值分解。
+
+用特征值分解去分析矩阵A时，得到特征向量构成的矩阵V和特征值构成的向量$$\lambda$$，A可以写作：
+$$
+A = Vdiag(\lambda)V^{-1}
+$$
+奇异值分解类似，只是A由3个矩阵产生：
+$$
+A = UDV^{T}
+$$
+假设A是一个m$\times$n，那么U是一个m$\times$m的矩阵，D是一个m$\times$n的矩阵，V是一个n$\times$n的矩阵。矩阵 U 和 V 都定义为正交矩阵，而矩阵 D 定义为对角矩阵。注意，矩阵 D 不一定是方阵。
 
