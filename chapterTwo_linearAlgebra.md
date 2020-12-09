@@ -342,5 +342,140 @@ $$
 $$
 A = UDV^{T}
 $$
-假设A是一个m$\times$n，那么U是一个m$\times$m的矩阵，D是一个m$\times$n的矩阵，V是一个n$\times$n的矩阵。矩阵 U 和 V 都定义为正交矩阵，而矩阵 D 定义为对角矩阵。注意，矩阵 D 不一定是方阵。
+假设A是一个m$\times$n，那么U是一个m$\times$m的矩阵，D是一个m$\times$n的矩阵，V是一个n$\times$n的矩阵。矩阵 U 和 V 都定义为正交矩阵，而矩阵 D 定义为对角矩阵。注意，矩阵 D 不一定是方阵。对角矩阵对角线上的元素被称为`奇异值`（singular value）。矩阵U的列向量成为`左奇异向量`（left-singular vectors）。矩阵V的列向量被称为`有奇异向量`（right-singular vectors）。
+
+可以用A特征分解去解释奇异值分解。A的`左奇异向量`（left-singular vectors）是AA<sup>T</sup>的特征向量。A的`右奇异向量`（right-singular vectors）是A<sup>T</sup>A的特征向量。A 的非零奇异值是 A<sup>⊤</sup>A 特征值的平方根，同时也是 AA<sup>⊤</sup> 特征值的平方根。
+
+（个人理解：左奇异向量U是m$\times$m矩阵，AA<sup>T</sup>也是m$\times$m矩阵，因此矩阵形状对上了，右奇异值同理，n$\times$n矩阵。）
+
+### 2.9 Moore-Penrose伪逆
+
+非方矩阵没有逆阵定义。比如想通过矩阵A左逆B来求解线性方程，
+$$
+Ax=y
+$$
+等式左边乘左逆B后，得到
+$$
+x=By
+$$
+如果矩阵A行数大于列数，方程无解。如果矩阵A行数小于列数，有多个解。
+
+A矩阵的伪逆定义为：
+$$
+A^+=\lim_{a\rightarrow0}(A^TA+\alpha I)^{-1}A^T
+$$
+但是计算伪逆用下面公式：
+$$
+A^+=VD^+U^T
+$$
+其中，矩阵 U，D 和 V 是矩阵 A奇异值分解后得到的矩阵。对角矩阵 D 的伪逆 D<sup>+</sup> 是其非零元素取倒数之后再转置得到的。当矩阵 A 的列数多于行数时，使用伪逆求解线性方程是众多可能解法中的一 种。特别地，x = A+y 是方程所有可行解中欧几里得范数 $\Vert x \Vert _2$ 最小的一个。当矩阵 A 的行数多于列数时，可能没有解。在这种情况下，通过伪逆得到的 x 使得 Ax 和 y 的欧几里得距离 $\Vert A x−y \Vert _2$ 最小。
+
+### 2.10 迹运算
+
+迹运算返回矩阵对角元素和：
+$$
+Tr(A)=\sum_i A_{i,j}
+$$
+迹运算可以描述`Frobenius范数`：
+$$
+\Vert A \Vert _F = \sqrt{Tr(AA^T)}
+$$
+迹运算在转置操作下不变：
+$$
+Tr(A) = Tr(A^T)
+$$
+矩阵相乘，挪动位置后仍然有定义，迹运算不变：
+$$
+Tr(ABC) = Tr(CAB) = Tr(BCA)
+$$
+另一个有用的事实是标量在迹运算后仍然是它自己: $a = Tr(a)$。
+
+### 2.11 行列式（The Determinate）
+
+行列式，记作$det(A)$，是将方阵A映射到实数的函数，行列式等于矩阵特征值的乘积。行列式的绝对值可以用来衡量矩阵参与矩阵乘法后空间扩大或者缩小 了多少。如果行列式是 0，那么空间至少沿着某一维完全收缩了，使其失去了所有的 体积。如果行列式是 1，那么这个转换保持空间体积不变。
+
+### 2.12 主成分分析（Principal Components Analysis）
+
+假设在$R^n$中有m个点$\left\{x^{(1)},...,x^{m}\right\}$，假设我想有损压缩这些点，意味着存储这些点用更少的内存，但是会尽量少的损失精度。一种方式使用低纬表示他们。对于每个点$x^{(i)}∈R^n$找到一个对应的编码向量$c^{(i)}∈R^l$。$l$比$n$小，比原始数据用更少的内存存储。要找到编码函数对输入生成编码，$f(x)=c$，把编码用解码函数重新生成输入，$x\approx g(f(x))$。
+
+用$g(c)=Dc, where D∈R^{n\times l}$是定义的解吗矩阵。为计算方便，PCA限制矩阵D的向量彼此正交，除非$l=n$否则D不是一个正交矩阵。目前所述会有很多解，因为扩张$D_{:,i}$按比例缩小$c_i$。为了使问题有唯一解，限制D所有列向量有`单位范数`。
+
+要明确如何把每个输入$x$得到的一个最优编码$c^*$，一种方式是最小化，输入$x$和$g(c^*)$之间的距离。用$L^2$范数衡量距离。
+$$
+c^*=arg\max_c\Vert x-g(c) \Vert_2
+$$
+用平方$L^2$范数替代$L^2$范数
+$$
+c^*=arg\max_c\Vert x-g(c) \Vert_2 ^2
+$$
+最小化函数可以化简：
+$$
+\begin{align*}
+  & (x-g(x))^T(x-g(c))\\
+  & = x^Tx-x^Tg(c)-g(c)^Tx+g(c)^Tg(c)\\
+  & = x^Tx-2x^Tg(c)+g(c)^Tg(c) &由于标量g(c)^Tx的转置等于自己 \\
+  & 由于第一项不依赖c，忽略。优化函数为：\\
+c^* &=arg\min_c -2x^Tg(c)+g(c)^Tg(c)\\
+c^* &=arg\min_c -2x^TDc+c^TD^TDc &用g(c)定义替换\\
+  & = arg\min_c - 2x^TDc+c^TI_lc &阵 D 的正交性和单位范数约束\\
+  & = arg\min_c - 2x^TDc+c^Tc
+\end{align*}
+$$
+用微积分求解最优化问题：
+$$
+\bigtriangledown_c(-2x^TDc+c^Tc)=0\\
+-2D^Tx+2c=0\\
+c=D^Tx
+$$
+最优编码x只需要一个矩阵向量相乘，编码向量，编码函数是：
+$$
+f(x)=D^Tx
+$$
+也可以定义PCA重构操作：
+$$
+r(x)=g(f(x))=DD^Tx
+$$
+挑选编码矩阵$D$，回顾下目的是最小化输入和}重构之间的$L^2$距离。要最小化所有维数和所有点误差矩阵Frobenius范数：
+$$
+D^*=arg\min_D\sqrt{\sum_{i,j}(x_j^{(i)}-r(x^{(i)})_j)^2},subject\ to\ D^TD=I_l
+$$
+为了推导简单令$l=1$，此时$D$是个单一向量$d$。
+$$
+d^*=arg\min_d \sum_i \Vert x^{(i)}-dd^Tx^{(i)}\Vert_2^2,subject\ to\ \Vert d\Vert_2=1
+$$
+因为$d是n\times1$的向量，$d^Tx^{(i)}$是标量。标量写在左边：
+$$
+d^*=arg\min_d\sum_i\Vert x^{(i)}-d^Tx^{(i)}d\Vert_2^2,subject\ to\ \Vert d\Vert_2=1
+$$
+标量转置不变：
+$$
+d^*=arg\min_d\sum_i\Vert x^{(i)}-x^{(i)T}dd\Vert_2^2,subject\ to\ \Vert d\Vert_2=1
+$$
+把求和写成矩阵形式。$X∈R^{m\times n}$作为向量堆叠地起来的矩阵。$X_{i,:}=x^{(i)T}$。$d\times d^T$得到矩阵是$n\times n$的。
+$$
+d^*=arg\min_d\Vert X-Xdd^T\Vert_F^2,subject\ to\ d^Td=1
+$$
+不考虑限制，化简：
+$$
+\begin{align*}
+  d^*&=arg\min_d\Vert X-Xdd^T\Vert_F^2\\
+     &=arg\min_d Tr((X-Xdd^T)^T(X-Xdd^T))\\
+     &=arg\min_d Tr(X^TX-X^TXdd^T-dd^TX^TX+dd^TX^TXdd^T)\\
+     &=arg\min_d Tr(X^TX)-Tr(X^TXdd^T)-Tr(dd^TX^TX)+Tr(dd^TXX^Tdd^T)\\
+     &=arg\min_d -Tr(X^TXdd^T)-Tr(dd^TX^TX)+Tr(dd^TX^TXdd^T) & 去掉没有d的\\
+     &=arg\min_d -2Tr(X^TXdd^T)+Tr(dd^TX^TXdd^T) &矩阵相乘顺序改变迹不变\\
+     &=arg\min_d -2Tr(X^TXdd^T)+Tr(X^TXdd^Tdd^T) &矩阵相乘顺序改变迹不变\\
+\end{align*}
+$$
+在考虑约束条件:
+$$
+\begin{align*}
+  &arg\min_d -2Tr(X^TXdd^T)+Tr(X^TXdd^Tdd^T),subject\ to\ d^Td=1\\
+  =&arg\min_d -2Tr(X^TXdd^T)+Tr(X^TXdd^T),subject\ to\ d^Td=1\\
+  =&arg\min_d -Tr(X^TXdd^T),subject\ to\ d^Td=1\\
+  =&arg\max_d Tr(X^TXdd^T),subject\ to\ d^Td=1\\
+  =&arg\max_d Tr(d^TX^TXd),subject\ to\ d^Td=1\\
+\end{align*}
+$$
+这个优化问题可以通过特征值分解来求解。最优的$d$是$X^TX$最大特征值对应的特征向量。以上$l=1$仅得到第一个主成分。当$l\gt 1$，矩阵$D$是前$l$个特征值对应的特征向量组成。
 
