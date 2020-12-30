@@ -495,3 +495,137 @@ $$
 $$
 这个优化问题可以通过特征值分解来求解。最优的$d$是$X^TX$最大特征值对应的特征向量。以上$l=1$仅得到第一个主成分。当$l\gt 1$，矩阵$D$是前$l$个特征值对应的特征向量组成。
 
+```python
+import pandas as pd
+import numpy as np
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+
+# load data
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['label'] = iris.target
+df.columns = ['sepal length', 'sepal width', 'petal length', 'petal width', 'label']
+df.label.value_counts()
+
+2    50
+1    50
+0    50
+Name: label, dtype: int64
+```
+
+```python
+# show data
+df.tail()
+
+	sepal length	sepal width	petal length	petal width	label
+145	6.7	3.0	5.2	2.3	2
+146	6.3	2.5	5.0	1.9	2
+147	6.5	3.0	5.2	2.0	2
+148	6.2	3.4	5.4	2.3	2
+149	5.9	3.0	5.1	1.8	2
+```
+
+```python
+df.head()
+
+	sepal length	sepal width	petal length	petal width	label
+0	5.1	3.5	1.4	0.2	0
+1	4.9	3.0	1.4	0.2	0
+2	4.7	3.2	1.3	0.2	0
+3	4.6	3.1	1.5	0.2	0
+4	5.0	3.6	1.4	0.2	0
+```
+
+```python
+# show data
+X = df.iloc[:, 0:4]
+y = df.iloc[:, 4]
+print("show first data:\n", X.iloc[0, 0:4])
+print("show first label:\n", y.iloc[0])
+print(X.shape)
+
+show first data:
+ sepal length    5.1
+sepal width     3.5
+petal length    1.4
+petal width     0.2
+Name: 0, dtype: float64
+show first label:
+ 0
+(150, 4)
+```
+
+```python
+class PCA():
+    def __init__(self):
+        pass
+    def fit(self, X, n_components):
+        n_samples = np.shape(X)[0]
+        covariance_matrix = (1 / (n_samples - 1)) * (X - X.mean(axis=0)).T.dot(X - X.mean(axis=0))
+        print(covariance_matrix.shape)
+        # pca covariance matrix
+        eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
+        print(eigenvalues.shape, eigenvectors.shape)
+        print(eigenvalues, eigenvectors)
+        # eigenvalues sort
+        idx = eigenvalues.argsort()[::-1]
+        print(idx)
+        eigenvectors = np.atleast_1d(eigenvectors[:, idx])[:, :n_components]
+        # little dimensions
+        X_transformed = X.dot(eigenvectors)
+        print(X_transformed.shape)
+        return X_transformed
+```
+
+```python
+model = PCA()
+Y = model.fit(X, 2)
+
+(4, 4)
+(4,) (4, 4)
+[4.22824171 0.24267075 0.0782095  0.02383509] [[ 0.36138659 -0.65658877 -0.58202985  0.31548719]
+ [-0.08452251 -0.73016143  0.59791083 -0.3197231 ]
+ [ 0.85667061  0.17337266  0.07623608 -0.47983899]
+ [ 0.3582892   0.07548102  0.54583143  0.75365743]]
+[0 1 2 3]
+(150, 2)
+```
+
+```python
+principalDf = pd.DataFrame(np.array(Y), columns=['principal component 1', 'principal component 2'])
+Df = pd.concat([principalDf, y], axis = 1)
+fig = plt.figure(figsize = (5,5))
+ax = fig.add_subplot(1,1,1)
+ax.set_xlabel('Principal Component 1', fontsize = 15)
+ax.set_ylabel('Principal Component 2', fontsize = 15)
+ax.set_title('2 component PCA', fontsize = 20)
+targets = [0, 1, 2]
+# ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica']
+colors = ['r', 'g', 'b']
+for target, color in zip(targets,colors):
+    indicesToKeep = (Df['label'] == target)
+    ax.scatter(Df.loc[indicesToKeep, 'principal component 1'], Df.loc[indicesToKeep, 'principal component 2'],
+               c = color, s = 50)
+ax.legend(targets)
+ax.grid()
+```
+
+<img src="./pca.png" alt="pca" style="zoom:50%;" />
+
+```python
+import numpy, pandas, matplotlib, sklearn
+print("numpy:", numpy.__version__)
+print("pandas:", pandas.__version__)
+
+numpy: 1.18.5
+pandas: 1.1.3
+  
+print("matplotlib:", matplotlib.__version__)
+print("sklearn:", sklearn.__version__)
+
+matplotlib: 3.3.2
+sklearn: 0.23.2
+```
+
