@@ -1,3 +1,5 @@
+
+
 ## 第二章 线性代数
 
 ### 2.1 标量 向量 矩阵 张量
@@ -414,15 +416,15 @@ $$
 
 假设在$R^n$中有m个点$\left\{x^{(1)},...,x^{m}\right\}$，假设我想有损压缩这些点，意味着存储这些点用更少的内存，但是会尽量少的损失精度。一种方式使用低纬表示他们。对于每个点$x^{(i)}∈R^n$找到一个对应的编码向量$c^{(i)}∈R^l$。$l$比$n$小，比原始数据用更少的内存存储。要找到编码函数对输入生成编码，$f(x)=c$，把编码用解码函数重新生成输入，$x\approx g(f(x))$。
 
-用$g(c)=Dc, where D∈R^{n\times l}$是定义的解吗矩阵。为计算方便，PCA限制矩阵D的向量彼此正交，除非$l=n$否则D不是一个正交矩阵。目前所述会有很多解，因为扩张$D_{:,i}$按比例缩小$c_i$。为了使问题有唯一解，限制D所有列向量有`单位范数`。
+用$g(c)=Dc, where D\in R^{n\times l}$是定义的解码矩阵。为计算方便，PCA限制矩阵D的向量彼此正交，除非$l=n$否则D不是一个正交矩阵。目前所述会有很多解，因为扩张$D_{:,i}$按比例缩小$c_i$。为了使问题有唯一解，限制D所有列向量有`单位范数`。
 
 要明确如何把每个输入$x$得到的一个最优编码$c^*$，一种方式是最小化，输入$x$和$g(c^*)$之间的距离。用$L^2$范数衡量距离。
 $$
-c^*=arg\max_c\Vert x-g(c) \Vert_2
+c^*=arg\min_c\Vert x-g(c) \Vert_2
 $$
 用平方$L^2$范数替代$L^2$范数
 $$
-c^*=arg\max_c\Vert x-g(c) \Vert_2 ^2
+c^*=arg\min_c\Vert x-g(c) \Vert_2 ^2
 $$
 最小化函数可以化简：
 $$
@@ -451,7 +453,7 @@ $$
 $$
 r(x)=g(f(x))=DD^Tx
 $$
-挑选编码矩阵$D$，回顾下目的是最小化输入和}重构之间的$L^2$距离。要最小化所有维数和所有点误差矩阵Frobenius范数：
+挑选编码矩阵$D$，回顾下目的是最小化输入和重构之间的$L^2$距离。要最小化所有维数和所有点误差矩阵Frobenius范数：
 $$
 D^*=arg\min_D\sqrt{\sum_{i,j}(x_j^{(i)}-r(x^{(i)})_j)^2},subject\ to\ D^TD=I_l
 $$
@@ -579,6 +581,112 @@ class PCA():
         return X_transformed
 ```
 
+解释下这段代码，先通俗的解释下pca。参考博客（https://blog.csdn.net/a10767891/article/details/80288463）
+
+pca主要步骤：
+
+1.输入样本矩阵$m\times n$。
+$$
+X=\left[\matrix{
+  x_{11}&x_{12}&...&x_{1n}\\
+  x_{21}&x_{22}&...&x_{2n}\\
+  ...&...&...&...\\
+  x_{m1}&x_{m2}&...&x_{mn}}
+  \right]_{m\times n}
+$$
+2.对样本矩阵进行中心化（取均值）
+$$
+X=\left[ \matrix{
+	x_{11}-\mu_1&x_{12}-\mu&...&x_{1n}-\mu_n\\
+	x_{21}-\mu_1&x_{22}-\mu&...&x_{2n}-\mu_n\\
+	...&...&...&...\\
+	x_{m1}-\mu_1&x_{m2}-\mu&...&x_{mn}-\mu_n
+}\right]_{m\times n}
+$$
+3.计算协方差矩阵
+$$
+C=\left[\matrix{
+	Cov(x_1,x_1)&Cov(x_1,x_2)&...&Cov(x_1,x_n)\\
+	Cov(x_2,x_1)&Cov(x_2,x_2)&...&Cov(x_2,x_n)\\
+	...&...&...&...\\
+	Cov(x_n,x_1)&Cov(x_n,x_2)&...&Cov(x_n,x_n)
+}\right]_{n\times n}
+$$
+简易公式：$C=\frac{1}{m}X^TX$
+
+4.计算协方差矩阵的特征值并取出最大的k个特征值所对应的特征向量，构成新的矩阵。若是用python3的话，借助numpy.linalg.eig函数即可。
+
+5.这个矩阵就是我们要求的特征矩阵，里面每一列就为样本的一维主成分。把样本矩阵投影到以该矩阵为基的新空间中，便可以将n维数据降低成k维数据。
+
+pca关键就是求出协方差矩阵的特征向量矩阵。pca就是降维技术。设有样本$m\times n$，有一个基矩阵P大小为$n\times k (k<n)$，P就是上文提到的编码矩阵$D\in R^{n\times l}$。
+
+令$Y=XP$，则Y矩阵的大小为$m\times k$。这样就把m个样本的维度从n减小到了k。维数减少了，虽然可以大大减少算法的计算量，但是若对基矩阵P选择不当的话就很有可能会导致信息量的缺失。因此我们要选择哪k个基才能保证降维后能最大程度保留原有的信息，是进行设计的主方向。
+
+我们可以知道信息来源于未知。也就是说如果不同样本的同一维度的值差异特别大，那该维度带给我们的信息量就是极大的。转换成数学语言，也就是说某维度的方差越大，它的信息量越大。
+
+PCA算法的优化目标就是:  ① 降维后同一维度的方差最大
+
+​                    					   ② 不同维度之间的相关性为0(其实就是让基向量互相正交)。
+
+同一元素的协方差就表示该元素的方差，不同元素之间的协方差就表示它们的相关性。因此这两个优化目标可以用协方差矩阵来表示。
+$$
+C=\left[\matrix{
+	Cov(x_1,x_1)&Cov(x_1,x_2)&...&Cov(x_1,x_n)\\
+	Cov(x_2,x_1)&Cov(x_2,x_2)&...&Cov(x_2,x_n)\\
+	...&...&...&...\\
+	Cov(x_n,x_1)&Cov(x_n,x_2)&...&Cov(x_n,x_n)
+}\right]_{n\times n}
+\Rightarrow
+C_Y=\left[\matrix{
+	\delta_{11}&0&...&0\\
+	0&\delta_{22}&...&0\\
+	...&...&...&...\\
+	0&0&...&\delta_{nn}
+}\right]_{n\times n}
+$$
+样本降维后希望得到的最理想的协方差矩阵（包含最多的信息）。
+
+优化目标是令$C_Y$矩阵的对角线元素之和最大。即$\max tr(C_Y)$
+
+下面总结下：
+
+设X为$m\times n$样本中心化矩阵，P为$n\times R$的基矩阵（每一列为一个基向量），$Y=XP$，是降维后的样本矩阵。则Y矩阵的协方差：
+$$
+\begin{align*}
+C^{'}_Y=&\frac{1}{m}\left( \begin{array}{c} XP \end{array} \right)^T\left( \begin{array}{c} XP \end{array} \right)\\
+C^{'}_Y=&P^T\left( \begin{array}{c} \frac{1}{m}X^TX \end{array} \right)P
+\end{align*}
+$$
+$\therefore C^{'}_Y=P^TCP$ （C就是样本的协方差矩阵）
+
+$\because P$是正交 （正交能减少降维后不同维度的相关性）
+
+$\therefore P^TP=I$
+
+所以优化目标表示为：
+$$
+\left \{
+	\begin{array}{l}
+		\max(tr(P^TCP))\\
+		P^TP=I
+	\end{array}
+\right.
+$$
+根据拉格朗日乘子法得：$f(P)=tr(P^TCP)+\lambda(P^TP-I)$
+
+对$f(P)$求导，取其零点。
+
+补充矩阵求导：
+$$
+\frac {\partial tr(AB)}{\partial A}=B^T \\
+\frac {\partial X^TX}{\partial X}=X\\
+\therefore \frac{\partial f}{\partial P}=\frac{\partial tr(P^TCP)}{\partial P}+\lambda \frac{\partial (P^TP)}{\partial P}=\frac {\partial tr(PP^TC)}{\partial P}+\lambda P=C^TP+\lambda P=CP+\lambda P
+$$
+当$\frac {\partial f}{\partial P}=0$时$CP+\lambda P=0 \Rightarrow CP=(-\lambda)P$
+
+因此又C矩阵的特征向量所构成的基矩阵，就是需要求解的变换矩阵。由该矩阵降维得到的新样本矩阵可以最大程度保留原样本的信息。因此信息量保存能力最大的基向量P，一定是样本矩阵X的协方差矩阵的特征向量。这个推导过程就解释了为什么PCA算法要利用样本协方差的特征向量矩阵来降维。
+
+
 ```python
 model = PCA()
 Y = model.fit(X, 2)
@@ -626,6 +734,6 @@ print("matplotlib:", matplotlib.__version__)
 print("sklearn:", sklearn.__version__)
 
 matplotlib: 3.3.2
-sklearn: 0.23.2
+sklearn: 0.23.2    
 ```
 
