@@ -7,3 +7,4 @@
 |---|----|-----|
 |第一章 前言|1 Introduction||
 |第二章 线性代数|2 Linear Algebra|[doc](https://github.com/conglanjun/deeplearning/blob/main/chapterTwo_linearAlgebra.md)|
+|第三章 概率与信息论|3 Probability and Information Theory|[doc](https://github.com/conglanjun/deeplearning/blob/main/chapter_there_probability_information_theory.md)|
