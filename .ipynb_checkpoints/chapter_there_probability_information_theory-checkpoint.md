@@ -100,14 +100,13 @@
   其中$\mu=0.5, \sigma=0.1$，如果没有似然计算的$0.7^7\times0.3^3\approx0.0022$，高斯极值在0.5，但是现在有似然项，计算的x极值在0.5～0.7之间。因此极值在0.5往右边一点。最后，那要怎样才能说服一个贝叶斯派相信$\theta=0.7$呢？你得多做点实验。。
 
 ### 3.2 随机变量
-​       `随机变量（Random variable）`是可以取不同值的变量。
+`随机变量（Random variable）`是可以取不同值的变量。
 ### 3.3 概率分布
-​       `概率分布（probability distrubution）`用来描述变量或一簇随机变量在每一个可能取到的状态的可能性大小。我们描述概率分布的方式取决于取决于随机变量是离散的还是连续的。
+`概率分布（probability distrubution）`用来描述变量或一簇随机变量在每一个可能取到的状态的可能性大小。我们描述概率分布的方式取决于取决于随机变量是离散的还是连续的。
 #### 3.3.1 离散变量和概率质量函数
-​       离散变量的概率分布可以用`概率质量函数（probability mass function，PMF）`来描述。概率质量函数将将随机变量取得的每个状态映射到取得该变量的概率。明确写出随机变量名$P(x=x)$
+离散变量的概率分布可以用`概率质量函数（probability mass function，PMF）`来描述。概率质量函数将将随机变量取得的每个状态映射到取得该变量的概率。明确写出随机变量名$P(x=x)$
 概率质量函数可以同时作用于多个随机变量，多个变量的概率分布被称为`联合概率分布（joint probability distribution）`。$P(x=x,y=y)$表示x=x，y=y同时发生的概率简写$P(x,y)$。
 PMF必须满足：
-
 - P的定义域是x所有可能状态集合
 - $\forall x \in x, 0 \le P(x) \le 1.$不可能发生的事件概率为0。
 - $\sum_{x\in x} P(x) =1.$这条性质称为`归一化（normalized）`。例如，离散型随机变量x有k个不同的状态。我们可以假设x是`均匀分布（uniform distribution）`，PMF为：
@@ -116,143 +115,90 @@ P(x=x_i)=\frac{1}{k}
 $$
 #### 累积分布函数
 
-​       累积分布函数(Cummulative Distribution Function)表示小雨x的概率的积分：
+累积分布函数(Cummulative Distribution Function)表示小雨x的概率的积分：
 $$
 CDF(x)=\int^x_{-\infty}p(t)dt
 $$
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import uniform
-
-# generate samples
-fix, ax = plt.subplots(1, 1)
-r = uniform.rvs(loc=0, scale=1, size=1000)
-# x：指定要绘制直方图的数据；输入值，这需要一个数组或者一个序列，不需要长度相同的数组。
-# bins：指定直方图条形的个数；
-# range：指定直方图数据的上下界，默认包含绘图数据的最大值和最小值；
-# density：布尔,可选。如果"True"，返回元组的第一个元素将会将计数标准化以形成一个概率密度，也就是说，直方图下的面积（或积分）总和为1。density=ture的意思是保证该面积的积分为1，并不是概率和为1。这是通过将计数除以数字的数量来实现的观察乘以箱子的宽度而不是除以总数数量的观察。如果叠加也是“真实”的，那么柱状图被规范化为1。(替代normed)
-# weights：该参数可为每一个数据点设置权重；
-# cumulative：是否需要计算累计频数或频率；
-# bottom：可以为直方图的每个条形添加基准线，默认为0；
-# histtype：指定直方图的类型，默认为bar，除此还有’barstacked’, ‘step’, ‘stepfilled’；
-# align：设置条形边界值的对其方式，默认为mid，除此还有’left’和’right’；
-# orientation：设置直方图的摆放方向，默认为垂直方向；
-# rwidth：设置直方图条形宽度的百分比；
-# log：是否需要对绘图数据进行log变换；
-# color：设置直方图的填充色；
-# label：设置直方图的标签，可通过legend展示其图例；
-# stacked：当有多个数据时，是否需要将直方图呈堆叠摆放，默认水平摆放；
-# normed：是否将直方图的频数转换成频率；(弃用，被density替代)
-# alpha：透明度，浮点数。
-ax.hist(r, density=True, histtype='stepfilled', alpha=0.5)
-#ppf(q, loc=0, scale=1) 百分比点函数(cdf的倒数—百分位数)。
-# pdf(x, loc=0, scale=1)Probability density function. 概率密度函数
-x = np.linspace(uniform.ppf(0.01), uniform.ppf(0.99), 100)
-ax.plot(x, uniform.pdf(x), 'r-', lw=5, alpha=0.8, label='uniform pdf') # lw: linewidth, alpha 透明度
-```
-
-<img src="./uniform_distribution.png" style="zoom:50%;" />
 
 #### 3.3.2 连续变量和概率密度函数
 
-​       研究连续型随机变量用`概率密度函数（probability density function，PDF）`描述概率分布，不用概率质量函数。概率密度函数p满足：
+研究连续型随机变量用`概率密度函数（probability density function，PDF）`描述概率分布，不用概率质量函数。概率密度函数p满足：
 - p的定义域是x所有可能状态集合
 - $\forall x \in x, p(x) \ge 0.$，我们不要求$p(x) \le 1$。
 - $\int p(x)dx=1.$  
 
-​       概率密度$p(x)$没有对特定状态给出概率，它给出了落在面积为$\delta x$的无限小的区域内的概率为$p(x)\delta x$。可以对概率密度函数求积分来获取点集的真实概率质量。单变量例子中，x落在区间$[a, b]$的概率是$\int_{[a, b]} p(x)dx$。
+概率密度p(x)没有对特定状态给出概率，它给出了落在面积为$\delta x$的无限小的区域内的概率为$p(x)\delta x$。可以对概率密度函数求积分来获取点集的真实概率质量。单变量例子中，x落在区间$[a, b]$的概率是$\int_{[a, b]} p(x)dx$。
 
 
 
 ### 3.4 边缘概率
-​       当我们知道了一组变量的联合概率分布，要了解其中一个子集的概率分布。这种定义在子集上的概率分布称为`边缘概率分布（marginal probability distribution）`。  
+当我们知道了一组变量的联合概率分布，要了解其中一个子集的概率分布。这种定义在子集上的概率分布称为`边缘概率分布（marginal probability distribution）`。  
 
 例如有随机变量x和y，并且知道$P(x,y)$。根据一下`求和法则（sum rule）`计算P(x)：
 $$
 \forall x \in x,P(x)=\sum_y P(x=x,y=y)
 $$
-​       边缘概率来源于手算边缘概率的计算过程。$P(x,y)$每行表示不同的x值，每列表示不同的y值形成的网格，行求和结果P(x)写在每行右边纸边缘处。  
+边缘概率来源于手算边缘概率的计算过程。$P(x,y)$每行表示不同的x值，每列表示不同的y值形成的网格，行求和结果P(x)写在每行右边纸边缘处。  
 
-​       对连续变量要用积分替代求和：
+对连续变量要用积分替代求和：
 $$
 p(x)=\int p(x,y)dy
 $$
 
 ### 3.5 条件概率
-​       给定其他事件发生时，感兴趣某个事件出现的概率，叫条件概率。给定x=x，y=y发生的条件概率记为$P(y=y|x=x)$。条件概率可以通过下面公式计算：
+给定其他事件发生时，感兴趣某个事件出现的概率，叫条件概率。给定x=x，y=y发生的条件概率记为$P(y=y|x=x)$。条件概率可以通过下面公式计算：
 $$
 P(y=y|x=x)=\frac{P(y=y,x=x)}{P(x=x)}
 $$
 ### 3.6 条件概率链式法则
-​       任何多维随机变量的联合概率分布，都可以分解成只有一个变量条件概率相乘形式。叫`链式法则(chain rule)`或`乘法法则(product rule)`。
+任何多维随机变量的联合概率分布，都可以分解成只有一个变量条件概率相乘形式。叫`链式法则(chain rule)`或`乘法法则(product rule)`。
 ### 3.7 独立性和条件独立
-​       两个随机变量x和y，如果概率分布可以表示成两个因子乘积形式，并且一个因子只包含x另一个只包含y，则两个随机变量`相互独立(independent)`：
+两个随机变量x和y，如果概率分布可以表示成两个因子乘积形式，并且一个因子只包含x另一个只包含y，则两个随机变量`相互独立(independent)`：
 $$
 \forall x \in x,y \in y, p(x=x, y=y) = p(x=x)p(y=y)
 $$
-​       如果关于x和y的条件概率分布对于z每个值都可以写成乘积形式，两个随机变量x和y在给定随机变量z时是`条件独立的(conditionally independent)：
+如果关于x和y的条件概率分布对于z每个值都可以写成乘积形式，两个随机变量x和y在给定随机变量z时是`条件独立的(conditionally independent)：
 $$
 \forall x \in x,y \in y,z \in z,p(x=x,y=y|z=z)=p(x=x|z=z)p(y=y|z=z)
 $$
 $x \perp y$表示x和y相互独立，$x \perp y | z$，x和y在给定z时条件独立。
 ### 3.8 期望、方差和协方差
-​       函数$f (x)$关于某分布$P(x)$的`期望(expectation)`或者`期望值(expected value)`是指，当x由P产生，f作用于x时，$f(x)$的平均值。对于离散型随机变量，可通过求和得到：
+函数$f (x)$关于某分布$P(x)$的`期望(expectation)`或者`期望值(expected value)`是指，当x由P产生，f作用于x时，$f(x)$的平均值。对于离散型随机变量，可通过求和得到：
 $$
 E_{x\sim P}[f(x)]=\sum_x P(x)f(x)
 $$
-​       对于连续型随机变量可以通过求积分得到：
+对于连续型随机变量可以通过求积分得到：
 $$
 E_{x\sim P}[f(x)]=\int_x P(x)f(x)
 $$
-​       可简写成$E_x[f(x)]$。进一步简写$E[f(x)]$。期望是线性的。  
+可简写成$E_x[f(x)]$。进一步简写$E[f(x)]$。期望是线性的。  
 
-​       `方差(variance)`衡量的是对x依据它的概率分布进行采样，随机变量x函数值会呈现多大差异：
+`方差(variance)`衡量的是对x依据它的概率分布进行采样，随机变量x函数值会呈现多大差异：
 $$
 Var(f(x))=E[(f(x)-E(f(x))^2]
 $$
-​       当方差很小时f(x)值形成的簇比较接近期望值。方差的平方根称为`标准差(standard variance)`。  
+当方差很小时f(x)值形成的簇比较接近期望值。方差的平方根称为`标准差(standard variance)`。  
 
-​       `协方差(covariance)`两个变量线性相关的强度以及这些变量的尺度：
+`协方差(covariance)`两个变量线性相关的强度以及这些变量的尺度：
 $$
 Cov(f(x),g(y))=E[(f(x)-E[f(x)])(g(y)-E[g(y))]
 $$
-​       协方差用于衡量两个变量的总体误差，方差是协方差一种特殊情况。公式上看协方差表示的是两个变量总体误差的期望。变化趋势一致则协方差是正。`相关系数(correlation)`将每个变量的值归一化，为了只衡量变量的相关性而不受变量尺度大小影响。  
+协方差用于衡量两个变量的总体误差，方差是协方差一种特殊情况。公式上看协方差表示的是两个变量总体误差的期望。变化趋势一致则协方差是正。`相关系数(correlation)`将每个变量的值归一化，为了只衡量变量的相关性而不受变量尺度大小影响。  
 
-​       独立性比零协方差的要求更强，独立性排除了非线性关系。  
+独立性比零协方差的要求更强，独立性排除了非线性关系。  
 
-​       随机向量$x\in \mathbb {R}^n$`协方差矩阵(covariance matrix)`是$n\times n$的矩阵。满足：
+随机向量$x\in \mathbb {R}^n$`协方差矩阵(covariance matrix)`是$n\times n$的矩阵。满足：
 $$
 Cov(x)_{i,j}=Cov(x_i,x_j)
 $$
-​       协方差矩阵对角元素是方差：
+协方差矩阵对角元素是方差：
 $$
 Cov(x_i,x_i)=Var(x_i)
 $$
-```python
-x = np.array([1,2,3,4,5,6,7,8,9])
-y = np.array([9,8,7,6,5,4,3,2,1])
-Mean = np.mean(x)
-
-Var = np.var(x) # 默认总体方差
-Var_unbias = np.var(x, ddof=1) # 样本方差（无偏方差）
-Cov = np.cov(x, y)
-Mean, Var, Var_unbias, Cov
-
-(5.0,
- 6.666666666666667,
- 7.5,
- array([[ 7.5, -7.5],
-        [-7.5,  7.5]]))
-```
-
-
-
 ### 3.9 常用概率分布
-
 #### 3.9.1 Bernouli分布
-​       `Bernoli分布(Bernoli distribution)`是单个二值随机变量分布。它由单个参数$\phi \in [0, 1]$控制，$\phi$给出了随机变量等于1的概率。具有如下性质：
+`Bernoli分布(Bernoli distribution)`是单个二值随机变量分布。它由单个参数$\phi \in [0, 1]$控制，$\phi$给出了随机变量等于1的概率。具有如下性质：
 $$
 P(\mathrm {x}=1)=\phi \\
 P(\mathrm {x}=0)=1-\phi \\
@@ -260,140 +206,28 @@ P(\mathrm {x}=x)=\phi ^x (1-\phi)^{1-x} \\
 \mathbb {E}_{\mathrm {x}} [\mathrm {x}]=\phi \\
 Var_{\mathrm {x}} (\mathrm {x})=\phi (1-\phi)
 $$
-```python
-def plot_distribution(X, axes=None):
-    """ 给定随机变量，绘制 PDF，PMF，CDF
-        PDF：概率密度函数（probability density function）在数学中，连续型随机变量的概率密度函数是一个描述这个随机变量的输出值，在某个确定的取值点附近的可能性的函数。
-        PMF : 概率质量函数（probability mass function), 在概率论中，概率质量函数是离散随机变量在各特定取值上的概率。
-        CDF : 累积分布函数 (cumulative distribution function)，又叫分布函数，是概率密度函数的积分，能完整描述一个实随机变量X的概率分布
-    """
-    if axes is None:
-        fig, axes = plt.subplots(1, 2, figsize=(10, 3))
-    x_min, x_max = X.interval(0.99)
-    print(x_min, x_max)
-    x = np.linspace(x_min, x_max, 1000)
-    if hasattr(X.dist, 'pdf'): # 判断有没有 pdf，即是不是连续分布
-        axes[0].plot(x, X.pdf(x), label="PDF")
-        axes[0].fill_between(x, X.pdf(x), alpha=0.5) # alpha 是透明度，alpha=0 表示 100% 透明，alpha=100 表示完全不透明
-    else: # 离散分布
-        x_int = np.unique(x.astype(int))
-        print(x.size)
-        print(x_int)
-        print(X.pmf(x_int), X.pmf(x_int).size)
-        axes[0].bar(x_int, X.pmf(x_int), label="PMF") # pmf 和 pdf 是类似的
-    print(X.cdf(x).size)
-    axes[1].plot(x, X.cdf(x), label="CDF")
-    for ax in axes:
-        ax.legend()
-    return axes
-  
-from scipy.stats import bernoulli
-fig, axes = plt.subplots(1, 2, figsize=(10, 3)) # 画布
-p = 0.3
-X = bernoulli(p) # 伯努利分布
-plot_distribution(X, axes=axes)
-
-0.0 1.0
-1000
-[0 1]
-[0.7 0.3] 2
-1000
-```
-
-<img src="./bernoulli_distribution.png" style="zoom:50%;" />
-
-```python
-# 生成的概率
-possibility = 0.3
-def trials(n_samples):
-    samples = np.random.binomial(n_samples, possibility)
-    proba_zero = (n_samples - samples) / n_samples
-    proba_one = samples / n_samples
-    return [proba_zero, proba_one]
-
-fig, axes = plt.subplots(1, 2, figsize=(10, 3))
-# 一次试验，伯努利分布
-n_samples = 1
-axes[0].bar([0, 1], trials(n_samples), label='Bernoulli')
-# n次试验，二项分布
-n_samples = 1000
-axes[1].bar([0, 1], trials(n_samples), label='Binomial')
-for ax in axes:
-    ax.legend()
-```
-
-<img src="./binomial_distribution.png" style="zoom:50%;" />
-
 #### 3.9.2 Multinoulli分布
-
-​       `Multinoulli分布(Multinoulli distribution)`或者`范畴分布(categorical distrubution)`是指在具有$k$个不同状态的单个离散型随机变量上的分布，其中$k$是一个有限值。Multinoulli分布由向量$p \in [0, 1]^{k-1}$参数化，其中每一个分量$p_i$表示第$i$个状态的概率。最后第$k$个状态概率可以通过$1-1^Tp$给出。(个人理解：这里乘1矩阵是为了让p中所有概率值相加)必须限制$1^Tp < 1$。Multinoulli分布经常用来表示对象分类的分布。Multinoulli分布是`多项式分布(multinomial distribution)`的一个特例。  
+`Multinoulli分布(Multinoulli distribution)`或者`范畴分布(categorical distrubution)`是指在具有$k$个不同状态的单个离散型随机变量上的分布，其中$k$是一个有限值。Multinoulli分布由向量$p \in [0, 1]^{k-1}$参数化，其中每一个分量$p_i$表示第$i$个状态的概率。最后第$k$个状态概率可以通过$1-1^Tp$给出。(个人理解：这里乘1矩阵是为了让p中所有概率值相加)必须限制$1^Tp < 1$。Multinoulli分布经常用来表示对象分类的分布。Multinoulli分布是`多项式分布(multinomial distribution)`的一个特例。  
 `伯努利分布(Bernoulli distribution)`又称两点分布或0-1分布。伯努利试验是只有两种可能结果的单次随机试验。如果将试验独立重复进行n次称为`n重Bernoulli分布`
 
-​       `二项分布(binomial distribution)`是`n重Bernoulli试验`成功次数的离散概率分布。伯努利分布是二项分布在$n=1$时的特例。
+`二项分布(binomial distribution)`是`n重Bernoulli试验`成功次数的离散概率分布。伯努利分布是二项分布在$n=1$时的特例。
 `多项式分布(Multinomial Distribution)`是二项式分布的推广。二项式做n次伯努利试验，规定了每次试验只有两个结果。如果做n次试验，每次试验结果可以有m多个，且m个结果发生的概率互斥，和为1。
 Multinoulli分布是多项式分布的一个特例。多项式分布是${0, ... , n}^k$中的向量分布，用于表示当对Multinoulli分布采样n次。多项式分布n=1就是Multinoulli分布。
 
-​       范畴分布 (Multinoulli Distribution) 是指在具有 *k* 个不同值的单个离散型随机变量上的分布: 
-$$
-p(\mathrm{x}=x)=\prod_i\phi_i^{x_i}
-$$
-​       例如每次试验的结果就可以记为⼀个 *k* 维的向量，只有此次试验的结果对应的维度记为 1，其他记为 0。
-
-```python
-def k_possibilities(k):
-    """
-    随机产生一组 10 维概率向量
-    """
-    res = np.random.rand(k)
-    print(res)
-    _sum = sum(res)
-    print(_sum)
-    for i, x in enumerate(res):
-        res[i] = x / _sum
-    return res
-    
-fix, axes = plt.subplots(1, 2, figsize=(10, 3))
-# 一次试验， 范畴分布
-k, n_samples = 10, 1
-res = k_possibilities(k)
-print('res:', res)
-samples = np.random.multinomial(n_samples, res, size=1)[0] # n_samples=1则只做一次试验，这次试验落在index=4位置，值为1。（若做两次试验则还会有一个值落在res其中一个）。若size=2是上述试验执行两次。返回两个数组。
-print('samples:', samples)
-axes[0].bar(range(len(samples)), samples / n_samples, label='Multinoulli')
-# n次试验，多项式
-n_samples = 1000
-samples = np.random.multinomial(n_samples, res)
-print('1000 samples:', samples)
-axes[1].bar(range(len(samples)), samples / n_samples, label='Multinomial')
-for ax in axes:
-    ax.legend()
-    
-[0.4980028  0.40898747 0.33920712 0.34476508 0.19825153 0.08870078
- 0.96354451 0.79039993 0.60738862 0.00252534]
-4.241773181122987
-res: [0.11740439 0.09641899 0.07996824 0.08127853 0.04673789 0.02091125
- 0.22715607 0.18633715 0.14319215 0.00059535]
-samples: [0 0 0 0 0 0 0 1 0 0]
-1000 samples: [119 100  90  84  39  17 212 165 174   0]
-```
-
-![](./multinoulli_multinomail_distribution.png)
-
 ### 3.9.3 高斯分布
-
-​       `正态分布(normal distribution)`也称`高斯分布(Gaussian distribution)`：
+`正态分布(normal distribution)`也称`高斯分布(Gaussian distribution)`：
 $$
 \mathcal{N}(x; \mu,\sigma^2)=\sqrt{\frac{1}{2\pi \sigma^2}}exp \left( \begin{array}{c} -\frac{1}{2\sigma^2}(x-\mu)^2 \end{array} \right)
 $$
-​       图中心x由$\mu$给出。峰宽度受$\sigma$控制。`标准正态分布(standard normal distribution)`其中$\mu=0, \sigma=1$。  
+图中心x由$\mu$给出。峰宽度受$\sigma$控制。`标准正态分布(standard normal distribution)`其中$\mu=0, \sigma=1$。  
 $\mu$是分布的均值：$\mathbb{E}[\mathrm{x}]=\mu$，分布标准差$\sigma$，方差$\sigma^2$
 当需要对概率密度函数求值时，对$\sigma^2$取倒数。用方差倒数控制`精度(presicion)`：
 $$
 \mathcal{N}(x; \mu,\beta^{-1})=\sqrt{\frac{\beta}{2\pi}}exp \left( \begin{array}{c} -\frac{1}{2}\beta(x-\mu)^2 \end{array} \right)
 $$
-​       `中心极限定理(central limit theorem)`说明很多独立随机变量的和近似服从正态分布。  
+`中心极限定理(central limit theorem)`说明很多独立随机变量的和近似服从正态分布。  
 
-​       正态分布可以推广到$\mathbb{R}^n$空间，称为`多维正态分布(multivariate normal distribution)`可以用正定对称矩阵$\sum$参数化：
+正态分布可以推广到$\mathbb{R}^n$空间，称为`多维正态分布(multivariate normal distribution)`可以用正定对称矩阵$\sum$参数化：
 $$
 \mathcal{N}(x; \mu,\sum)=\sqrt{\frac{1}{(2\pi)^n det(\sum)}}exp \left( \begin{array}{c} -\frac{1}{2}(x-\mu)^T \sum^{(-1)} (x-\mu) \end{array} \right)
 $$
@@ -401,109 +235,18 @@ $\mu$代表均值，只是现在是向量值。参数$\sum$给出了分布的协
 $$
 \mathcal{N}(x; \mu,\beta^{-1})=\sqrt{\frac{det(\beta)}{(2\pi)^n}}exp \left( \begin{array}{c} -\frac{1}{2}(x-\mu)^T \beta (x-\mu) \end{array} \right)
 $$
-​       常把协方差矩阵固定成对角阵。更简单形式是`各向同性(isotropic)`高斯分布，它们的协方差矩阵是标量乘以单位矩阵。
-```python
-from scipy.stats import norm
-fig, axes = plt.subplots(1, 2, figsize=(10, 3))
-mu, sigma = 0, 1
-X = norm(mu, sigma) # 标准正态分布
-plot_distribution(X, axes=axes)
-
--2.5758293035489004 2.5758293035489004
-1000
-```
-
-![](./gaussion_distribution.png)
-
-```python
-# 绘制多维数组拼接以及分割的三个轴方向，first axis为竖直方向，second axis为水平方向，third axis为深度方向
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-fig = plt.figure() 
-ax = plt.axes(projection='3d')
-x = [0, 0]
-y = [0, 0]
-z = [0, 1]
-ax.plot(x, y, z, label='first axis', linewidth=5)
-x = [0, 1]
-y = [0, 0]
-z = [0, 0]
-ax.plot(x, y, z, label='second axis', linewidth=5)
-x = [0, 0]
-y = [0, 1]
-z = [0, 0]
-ax.plot(x, y, z, label='third axis', linewidth=5)
-ax.legend()
-# 绘制下三维度的图像，为了解释vstack hstack dstack
-```
-
-![](./3-dimension.png)
-
-```python
-from scipy.stats import multivariate_normal
-import matplotlib.pyplot as plt
-# np.mgrid[ 第1维，第2维 ，第3维 ， …] 每一维度，a:b:c，c表示步长，为实数表示间隔；该为长度为[a,b),左开右闭。a:b:cj，cj表示步长，为复数表示点数；该长度为[a,b]，左闭右闭
-x, y = np.mgrid[-1:1:0.1, -1:1:0.1]
-# vstack、hstack和dstack都用于把几个小数组合并成一个大数组。它们的差别是小数组的元素在大数组中的排列顺序有所不同。a、b二者在0号轴上连接起来。
-# vstack垂直合并，a=[1,2] b=[3,4] np.vstack((a,b)) => [[1 2] [3 4]]
-# hstack表示轴1合并。hstack的字母h来自于horizontal，表示两个数组是水平的，hstack((a,b))将把b排在a的右边的意思。
-# np.hstack([[1,2],[3]]) => [1,2,3] 没有增维，结果不像vstack，对一维数组合并的结果还是一维的。
-# a = [[1,2],
-#      [3,4]]
-# b = [[5],
-#      [6]]
-# print(np.hstack([a,b]))
-# [[1 2 5]
-#  [3 4 6]]
-# dstack是说deep stack了，它是轴2合并。dstack([a,b])把a和b摞在一起，像一摞扑克牌一样。
-# a = np.array([1,2]) b = np.array([3,4]) => np.dstack((a,b))
-# [[[1 3]
-#   [2 4]]]
-pos = np.dstack((x, y))
-fig = plt.figure(figsize=(4, 4))
-axes = fig.add_subplot(111)
-mu = [0.5, -0.2] # 均值
-sigma = [[2.0, 0.3], [0.3, 0.5]] #协方差矩阵
-X = multivariate_normal(mu, sigma)
-axes.contourf(x, y, X.pdf(pos)) # contourf 画等高线和填充等高线
-```
-
-![](./multi-dimensions-gaussion.png)
-
+常把协方差矩阵固定成对角阵。更简单形式是`各向同性(isotropic)`高斯分布，它们的协方差矩阵是标量乘以单位矩阵。
 ### 3.9.4 指数分布和Laplace分布
-
-​       当需要在$x=0$处取得边界点(sharp point)。可以用`指数分布(exponential distribution)`：
+当需要在$x=0$处取得边界点(sharp point)。可以用`指数分布(exponential distribution)`：
 $$
 p(x;\lambda)=\lambda \mathcal{1}_{x\ge 0}exp(-\lambda x)
 $$
-指示函数(indicator function)$\mathcal{1}_{x\ge 0}$使x取负值时，概率为零。是⽤于在 *x* = 0 处获得最⾼的概率的分布，其中 *λ >* 0 是分布的⼀个参数，常被称为率参数 (Rate Parameter)。
-
-```python
-from scipy.stats import expon
-fig, axes = plt.subplots(1, 2, figsize=(10, 3)) # 其中figsize=(a, b)用来设置图形的大小，a为图形的宽， b为图形的高
-# 定义scale = 1 / lambda
-X = expon(scale=1)
-plot_distribution(X, axes=axes)
-```
-
-![](./expon.png)
-
+指示函数(indicator function)$\mathcal{1}_{x\ge 0}$使x取负值时，概率为零。
 一个相似的概率分布是Laplace分布，允许在任意一点$\mu$处设置概率质量的峰值。
 $$
 Laplace(x;\mu,\gamma)= \frac{1}{2\gamma} exp \left( \begin{array}{c}-\frac{|x-\mu|}{\gamma} \end{array}\right)
 $$
-```python
-from scipy.stats import laplace
-fix, axes = plt.subplots(1, 2, figsize=(10, 3))
-mu, gamma = 0, 1
-X = laplace(loc=mu, scale=gamma)
-plot_distribution(X, axes=axes)
-```
-
-![](./laplace.png)
-
 ### 3.9.5 Dirac分布和经验分布
-
 当希望概率分布集群点围绕一个点，通过`Dirac delta函数（Dirac delta function）`$\delta (x)$实现这样的概率密度函数:
 $$
 p(x)=\delta(x-\mu)
@@ -549,57 +292,7 @@ $$
 \zeta(x)-\zeta(-x)=x
 $$
 函数$\sigma^{-1}$在统计学中称为`分对数(logit)`，机器学习很少用。
-```python
-x = np.linspace(-10, 10, 100)
-sigmoid = 1 / (1 + np.exp(-x))
-softplus = np.log(1 + np.exp(x))
-fig, axes = plt.subplots(1, 2, figsize=(10, 3))
-axes[0].plot(x, sigmoid, label='sigmoid')
-axes[1].plot(x, softplus, label='softplus')
-for ax in axes:
-    ax.legend()
-```
-
-![](./sigmoid_softplus.png)
-
-```python
-def H(sentence):
-    """最优编码长度"""
-    entropy = 0
-    # 这里有 256 个可能的 ASCII 符号
-    for character_i in range(256):
-        Px = sentence.count(chr(character_i)) / len(sentence)
-        if Px > 0:
-            entropy += -Px * math.log(Px, 2)
-    return entropy
-import random
-import math
-simple_message = "".join([chr(random.randint(0, 64)) for i in range(500)])
-print(simple_message)
-H(simple_message)
--------------------------
-'03-;.",=	(;#?/;,'12<1	26'#3@08(14	$&-'>#?(
-<*+.
-<.' 8/@
-716/(2#(-.9
-#(/@
-"+4?(20=45$)'
-
-)*!#$	.'&8
-6+$<
-
-6?.7,7?3;+8596,1*&<
-8-"=26:6#.%;$%-09?%!*8;.@0
-?2<:,2 "$!	60@9/=58""1/9)2/):; 3=47%/399;(@53(,:<'!=<+!+%/?&//45,8<1
-68'+8?=7/.4 *0# +
-?.
-5.918814777080752
-```
-
-
-
 ## 3.11贝叶斯规则
-
 经常需要在已知$P(y|x)时计算P(x|y)$，如果还知道$P(x)$，我们可以用`贝叶斯规则(Bayes’ rule)`来实现：
 $$
 P(x|y)=\frac{P(x)P(y|x)}{P(y)}
@@ -634,45 +327,7 @@ $$
 H(P,Q)=-\mathbb{E}_{x \thicksim P}\log Q(x)
 $$
 针对Q最小化交叉熵等价于最小化KL散度。当遇到$0\log 0$这个表达式。在信息论中，将这个表达式处理为$\lim_{x\rightarrow 0} x \log x =0$
-
-```python
-# D(P||Q) 与 D(Q||P) 比较
-x = np.linspace(1, 8, 500)
-y1 = norm.pdf(x, 3, 0.5) # normpdf：正态概率密度函数 Y = normpdf(X,mu,sigma)
-y2 = norm.pdf(x, 6, 0.5)
-p = y1 + y2 # 构造p(x)
-# print(p)
-KL_pq, KL_qp = [], []
-q_list = []
-for mu in np.linspace(0, 10, 50):
-    for sigma in np.linspace(0.1, 5, 50): # 寻找最优的q(x)
-        q = norm.pdf(x, mu, sigma)
-        q_list.append(q)
-        KL_pq.append(entropy(p, q))
-        KL_qp.append(entropy(q, p))
-KL_pq_min = np.argmin(KL_pq)
-KL_qp_min = np.argmin(KL_qp)
-fig, axes = plt.subplots(1, 2, figsize=(10, 3))
-axes[0].set_ylim(0, 0.8)
-axes[0].plot(x, p / 2, 'b', label='$p(x)$')
-axes[0].plot(x, q_list[KL_pq_min], 'g--', label='$q^*(x)$')
-axes[0].set_xlabel('$x$')
-axes[0].set_ylabel('$p(x)$')
-axes[0].set_title('$q^*={arg\min}_q D_{KL}(p||q)$')
-axes[1].set_ylim(0, 0.8)
-axes[1].plot(x, p/2, 'b', label='$p(x)$')
-axes[1].plot(x, q_list[KL_qp_min], 'g--', label='$q^*(x)$')
-axes[1].set_xlabel('$x$')
-axes[1].set_ylabel('$p(x)$')
-axes[1].set_title('$q^*= {arg\min}_ q D_{KL}(q||p)$')
-for ax in axes:
-    ax.legend(loc='upper right')
-```
-
-![](./kl_divergence.png)
-
 ## 3.14 结构化概率模型
-
 机器学习算法会涉及到非常多的随机变量上的概率分布。概率分布涉及到的直接相互作用都是介于非常少的变量之间。使用单个函数来描述整个联合概率分布是非常低效的。
 可以把概率分布分解成许多因子的乘积形式，而不是使用单一的函数来表示概率分布。例如假设我们有三个随机变量a, b和c，并且a影响b的取值，b影响c的取值，但是a和c在给定b时是条件独立的。可以把全部三个变量概率分布重新表示为两个变量概率分布连乘形式：
 $$
@@ -691,77 +346,3 @@ $$
 p(x)=\frac{1}{Z}\prod_i \phi^{(i)}(C^{(i)})
 $$
 图模型表示的分解仅仅是描述概率分布的一种语言。有向或者无向不是概率分布的特性；它仅是概率分布的一种特殊`描述(description)`所具有的特性，而任何概率分布都可以用这两种方式进行描述。
-
-```python
-import networkx as nx
-from pgmpy.models import BayesianModel
-from pgmpy.factors.discrete import TabularCPD
-import matplotlib.pyplot as plt
-# 建立一个简单贝叶斯模型框架
-model = BayesianModel([('a', 'b'), ('a', 'c'), ('b', 'c'), ('b', 'd'), ('c', 'e')])
-# 最顶层的父节点的概率分布表
-cpd_a = TabularCPD(variable='a', variable_card=2, values=[[0.6], [0.4]]) # a: (0,1)
-# 其它各节点的条件概率分布表（行对应当前节点索引，列对应父节点索引）
-cpd_b = TabularCPD(variable='b', variable_card=2, # b: (0,1)
-                values=[[0.75, 0.1],
-                        [0.25, 0.9]],
-                evidence=['a'],
-                evidence_card=[2])
-cpd_c = TabularCPD(variable='c', variable_card=3, # c: (0,1,2)
-                values=[[0.3, 0.05, 0.9, 0.5],
-                        [0.4, 0.25, 0.08, 0.3],
-                        [0.3, 0.7, 0.02, 0.2]],
-                evidence=['a', 'b'],
-                evidence_card=[2, 2])
-cpd_d = TabularCPD(variable='d', variable_card=2, # d: (0,1)
-                values=[[0.95, 0.2],
-                        [0.05, 0.8]],
-                evidence=['b'],
-                evidence_card=[2])
-cpd_e = TabularCPD(variable='e', variable_card=2, # e: (0,1)
-                values=[[0.1, 0.4, 0.99],
-                        [0.9, 0.6, 0.01]],
-                evidence=['c'],
-                evidence_card=[3])
-# 将各节点的概率分布表加入网络
-model.add_cpds(cpd_a, cpd_b, cpd_c, cpd_d, cpd_e)
-# 验证模型数据的正确性
-print(u"验证模型数据的正确性:",model.check_model())
-# 绘制贝叶斯图 (节点 + 依赖关系)
-nx.draw(model, with_labels=True, node_size=1000, font_weight='bold', node_color='y', pos={"e":[4,3],"c":[4,5],"d":[8,5],"a":[2,7],"b":[6,7]})
-plt.text(2,7,model.get_cpds("a"), fontsize=10, color='b')
-plt.text(5,6,model.get_cpds("b"), fontsize=10, color='b')
-plt.text(1,4,model.get_cpds("c"), fontsize=10, color='b')
-plt.text(4.2,2,model.get_cpds("e"), fontsize=10, color='b')
-plt.text(7,3.4,model.get_cpds("d"), fontsize=10, color='b')
-plt.show()
-```
-
-<img src="./bayesian_net.png" style="zoom:50%;" />
-
-```python
-import networkx as nx
-from pgmpy.models import MarkovModel
-from pgmpy.factors.discrete import DiscreteFactor
-import matplotlib.pyplot as plt
-
-# 建立一个简单马尔科夫网
-model = MarkovModel([('a', 'b'), ('a', 'c'), ('b', 'c'),('b', 'd'), ('c', 'e')])
-# 各团因子 (参数随机选择)
-factor_abc = DiscreteFactor(['a', 'b', 'c'], cardinality=[2,2,2], values=np.random.rand(8))
-factor_bd = DiscreteFactor(['b', 'd'], cardinality=[2,2], values=np.random.rand(4))
-factor_ce = DiscreteFactor(['c', 'e'], cardinality=[2,2], values=np.random.rand(4))
-# 将各团因子加入网络
-model.add_factors(factor_abc,factor_bd,factor_ce)
-# 验证模型数据的正确性
-print(u"验证模型数据的正确性:",model.check_model())
-# # 绘制贝叶斯图 (节点 + 依赖关系)
-nx.draw(model, with_labels=True, node_size=1000, font_weight='bold', node_color='y', \
-pos={"e":[4,3],"c":[4,5],"d":[8,5],"a":[2,7],"b":[6,7]})
-plt.text(2,7,model.get_factors()[0], fontsize=10, color='b')
-plt.text(7,3.4,model.get_factors()[1], fontsize=10, color='b')
-plt.text(4.2,2,model.get_factors()[2], fontsize=10, color='b')
-plt.show()
-```
-
-<img src="./markov_net.png" style="zoom:50%;" />
